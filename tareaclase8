@@ -1,0 +1,48 @@
+#####serie de tiempo de las acciones de netflix, de un año, diario, aplicar los 4 modelos, hacer una gráfica de pronósticos y ajustados, 
+NTFLX<- read.csv("file:///C:/Users/Sala-H1/Downloads/NFLX.csv")
+require(fts)
+require(xts)
+NTFLSfts<- fts(NTFLX$Date,NTFLX$Close)
+NTFLSts<- ts(NTFLX$Date,NTFLX$Close)
+require (fpp)
+NTFLSts
+NETFmod1<- meanf(NTFLSts, h=253)
+NETFmod2<- naive(NTFLSts, h=253)
+NETFmod3<- snaive(NTFLSts, h=253)
+NETFmod4<- rwf(NTFLSts, h=200, drift=T)
+x11()
+plot(NETFmod1, main="Acciones Netflix", col="green")
+
+lines(NETFmod1$mean, col= "green")
+lines(NETFmod2$mean, col= "black")
+lines(NETFmod3$mean, col= "red")
+lines(NETFmod4$mean, col= "orange")
+legend("topleft", lty= 1, col=c("green", "black", "gray", "orange"), legend= c("media","ingenuu" ,"ingenuo estacional",  "deriva"))
+##
+x11()
+plot(NETFmod1, main="", col="green")
+lines(NETFmod1$fitted, col= "green")
+lines(NETFmod2$fitted, col= "black")
+lines(NETFmod2$fitted, col= "red")
+lines(NETFmod4$fitted, col= "orange")
+legend("topleft", lty= 1, col=c(5,6,7,8), legend= c("media","ingenuu" ,"ingenuo estacional",  "deriva"))
+
+
+###
+require(zoo)
+zooNET <- zoo(x=NTFLX$Close, order.by=as.POSIXct(NTFLX$Date, origin="2017-03-07"))
+
+NETFmod1<- meanf(zooNET, h=253)
+#NETFmod2<- naive(zooNET, h=253)
+#NETFmod3<- snaive(zooNET, h=253)
+#NETFmod4<- rwf(zooNET, h=200, drift=T)
+x11()
+plot(NETFmod1, main="Acciones Netflix", col="green")
+
+lines(NETFmod1$mean, col= "green")
+
+legend("topleft", lty= 1, col=c("green", "black", "gray", "orange"), legend= c("media","ingenuu" ,"ingenuo estacional",  "deriva"))
+##
+x11()
+plot(NETFmod1, main="NETFLIX acciones", col="green")
+lines(NETFmod1$fitted, col= "green")
