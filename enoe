@@ -1,0 +1,41 @@
+library(foreign)
+sdemt106<-read.dbf("C:/Users/dlara/Desktop/ENOE/sdemt106.dbf")
+sdemt206<-read.dbf("C:/Users/dlara/Desktop/ENOE/sdemt206.dbf")
+sdemt306<-read.dbf("C:/Users/dlara/Desktop/ENOE/sdemt306.dbf")
+sdemt406<-read.dbf("C:/Users/dlara/Desktop/ENOE/sdemt406.dbf")
+library(dplyr)
+
+#filter
+AG106<- subset(sdemt106, CD_A==14 & R_DEF==0 & C_RES==1 | C_RES==3)
+AG206<- subset(sdemt206, CD_A==14 & R_DEF==0 & C_RES==1 | C_RES==3)
+AG306<- subset(sdemt306, CD_A==14 & R_DEF==0 & C_RES==1 | C_RES==3)
+AG406<- subset(sdemt406,CD_A==14 & R_DEF==0 & C_RES==1 | C_RES==3)
+
+
+TD106<- summarise(AG106, TD= count( filter(AG106, CLASE2==2))/count(filter(AG106, CLASE1==1)))
+TD206<- summarise(AG206, TD= count( filter(AG206, CLASE2==2))/count(filter(AG206, CLASE1==1)))
+TD306<- summarise(AG306, TD= count( filter(AG306, CLASE2==2))/count(filter(AG306, CLASE1==1)))
+TD406<- summarise(AG406, TD= count( filter(AG406, CLASE2==2))/count(filter(AG406, CLASE1==1)))
+TDtotal<-Reduce(function(x,y) merge(x,y, all=TRUE, by= c(names(TD106$TD))), list(TD106$TD,TD206$TD,TD306$TD,TD406$TD))
+
+#asalariados
+
+TTA106<- summarise(AG106, TD= count( filter(AG106, REMUNE2C==2))/count(filter(AG106, CLASE2==1)))
+TTA206<- summarise(AG206, TD= count( filter(AG206, REMUNE2C==2))/count(filter(AG206, CLASE2==1)))
+TTA306<- summarise(AG306, TD= count( filter(AG306, REMUNE2C==2))/count(filter(AG306, CLASE2==1)))
+TTA406<- summarise(AG406, TD= count( filter(AG406, REMUNE2C==2))/count(filter(AG406, CLASE2==1)))
+TTAtotal<- Reduce(function(x,y) merge(x,y, all=TRUE, by= c(names(TTA106$TD))), list(TTA106$TD,TTA206$TD,TTA306$TD,TTA406$TD))
+
+
+
+#TIL1
+
+TIL1106<- summarise(AG106, TD= count( filter(AG106, EMP_PPAL==1))/count(filter(AG106, CLASE2==1)))
+TIL1206<- summarise(AG206, TD= count( filter(AG206, EMP_PPAL==1))/count(filter(AG206, CLASE2==1)))
+TIL1306<- summarise(AG306, TD= count( filter(AG306, EMP_PPAL==1))/count(filter(AG306, CLASE2==1)))
+TIL1406<- summarise(AG406, TD= count( filter(AG406, EMP_PPAL==1))/count(filter(AG406, CLASE2==1)))
+TIL1total<-Reduce(function(x,y) merge(x,y, all=TRUE, by= c(names(TIL1106$TD))), list(TIL1106$TD,TIL1206$TD,TIL1306$TD,TIL1406$TD))
+
+
+#system.time(TOTENOE06<- Reduce(function(x,y) merge(x,y, all=TRUE, by= c(names(sdemt106))), list(sdemt106,sdemt206,sdemt306,sdemt406)))
+#cambiar cada terminaciÃ³n en find y reemplazarla por el aÃ±o deseado
