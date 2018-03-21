@@ -1,0 +1,12 @@
+PIB<- read.csv("file:///C:/Users/Sala-H1/Downloads/datos.csv", sep=",")
+PIBst<- ts(PIB, frequency = 4, start=1999)
+library(fpp)
+library(forecast)
+
+PIBSES<- ses(PIBst, h=5, alpha=.5, initial=c("simple"))
+PIBholt<- holt(PIBst, h=10, initial = c("simple"), beta= 0.5)
+plot(PIBst)
+lines(PIBSES$fitted, col="green")
+lines(PIBholt$fitted, col= "red")
+lines(PIBSES$mean, col="green")
+lines(PIBholt$mean, col="red")
