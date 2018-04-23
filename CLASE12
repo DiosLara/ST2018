@@ -1,0 +1,20 @@
+PIB<- read.csv("file:///C:/Users/Sala-H1/Documents/PIBanual.csv", header=F)
+PIBts<- ts(PIB, frequency = 1, start=1961)
+require(fpp)
+mod1<- auto.arima(PIBts, seasonal=F)
+mod1
+x11()
+plot(forecast(mod1, h=10))
+### Ejercicio
+ASALARIADOS<- read.csv("file:///C:/Users/Sala-H1/Documents/asalar.csv")
+APPLE<- read.csv("file:///C:/Users/Sala-H1/Documents/AAPL.MX.csv")
+asts<- ts(ASALARIADOS, frequency = 4, start=2005 )
+applts<- ts(APPLE, frequency = 252, start= 2017)
+mod1<- auto.arima(asts, seasonal=F)
+mod2<- auto.arima(applts,seasonal=F)
+x11()
+plot(forecast(mod1,h=10))
+plot(forecast(mod2, h=20))
+# apple : ARIMA(0,1,0), en éste indica que los datos no son propensos para usar arima
+#si el modelo fuera (2,0,1), indica 0 diferenciación, 2 ctes ar y 1 de medias móviles: yt= cyt-1+c2yt-2+theta(et-1)
+# asaliarados : ARIMA(2,1,0), 2 ctes ar, 1 diferenciación y 0 de medias móviles
