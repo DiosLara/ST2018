@@ -1,0 +1,79 @@
+BIMBO<- read.csv("file:///C:/Users/Sala-H1/Downloads/BIMBOA.MX (1).csv")
+BIMBOTS<- ts( BIMBO$Close, frequency = 252, start=2017)
+require(fpp)
+####Revisar si la serie es estacionaria
+#Lo hacemos con el adf.test
+adf.test(BIMBOTS)
+#TENEMOS UN p-VLUE= .08, se espera que sea menor a .05
+#Por lo tanto la serie no es estacionaria al 95%. Se aplica una diferenciación ya que el dato es muy cercano. 
+dbimbot<- diff(BIMBOTS)
+adf.test(dbimbot)
+plot(dbimbot)
+#aquí ya podemos decir que la serie es estacionaria ya que su p-value es .01
+##aplicamos un modelo arima, por lo que hay que elegir los valores de p,d y q.
+#d ya lo tenemos porque es la diferenciación, entonces d=1. Para elegir py q se utiliza la autocorrelación y la autocorrelación parcial
+#primero aplicando la función de autocorrelación para elegir el valor de q 
+acf(dbimbot, main="ACF")
+##una vez que aplicamos el acf vamos a observar la gráfica y ver cuántas líneas sobrepasan el margen
+#el número de líneas son el valor de q
+pacf(dbimbot)
+#en la prueba acf, sobrepasa el primer valor, éste valor siempre se sobre pasa entonces q=0 .
+#EN oacf no sobrepasa ninguno
+#se propone una arima: 
+#Se utiliza la serie original porque la diferenciación sólo se obtuvo para hacerla estacionaria y verificar el valor de d
+mod1bim<- Arima(BIMBOTS, order=c(0,1,0))
+#nos da un modelo con criterios AIC, AICc y BIC. El que se recomienda notar el el AICc
+#se debe buscar el AICc que sea menor. 
+#usando otros modelos
+mod2bim<- Arima(BIMBOTS, order=c(1,1,2))
+mod3bim<- Arima(BIMBOTS, order=c(3,1,2))
+mod4bim<- Arima(BIMBOTS, order=c(2,1,2))
+#al observarlos notamos que el menor AICc es el del modelo 4 (449.86)
+mod4<- forecast(mod4bim, h=12)
+plot(mod4, include=18 )
+#el include te da los último 18 datos para observar la tendencia
+mod5bim<- auto.arima(BIMBOTS)
+mod5<-  forecast(mod5bim, h=12)
+plot(mod5, include=18 )
+
+
+###Elegir dos series de tiempo diferentes a las que hemos visto en clase y repetir el procedimiento
+#para elegir un modelo arima "mejor", según los criterios AICC y compararlos con el autoarima
+
+#ausair es el total de pasajeros en vuelos internacionales y domesticos, en australia durante 1970-2009 en periodos anuales
+adf.test(ausair)
+ausaird<- diff(ausair)
+adf.test(ausaird)
+
+acf(ausaird)
+pacf(ausaird)
+mod1aus<- Arima(ausair, order=c(0,1,0))
+
+mod2aus<- Arima(ausair, order=c(3,1,2))
+mod3aus<- Arima(ausair, order=c(0,1,2))
+mod4aus<- Arima(ausair, order=c(3,2,2))
+
+#parece que el modelo 4 es el mejor
+mod5aus<- auto.arima(ausair)
+mod4<- forecast(mod4aus, h=12)
+plot(mod4, include=20)
+mod5<- forecast(mod5aus, h=12)
+plot(mod5, include=20)
+
+#para obtener el modelo autoarima sería,  Arima(ausair, order=c(0,1,0), include.drift=T)
+#anuncios de seguros emitidos por tv  durante el 2002 al 2005 de forma mensual 
+adf.test(insurance[,2])
+insuranced<- diff(insurance[,2])
+adf.test(insuranced)
+
+acf(insuranced)
+pacf(insuranced)
+mod1ins<- Arima(insurance[,2], order= c(1,1,2))
+mod1ins
+mod2ins<- auto.arima(insurance[,2])
+mod2ins
+ mod1<- forecast(mod1ins, h=12)
+ mod2<- forecast(mod2ins, h=12)
+ plot(mod1, include=20)
+ plot(mod2, include=20)
+ 
